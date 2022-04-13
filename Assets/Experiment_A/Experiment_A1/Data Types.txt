@@ -1,0 +1,12 @@
+data types 
+
+Unity mathematics
+Vector2 -> float2
+Vector2Int -> int2
+Matrix4x4 -> float4x4
+quaternions
+
+Native containers 
+List<N> -> Native List 
+Array[] -> Native Array
+ 
