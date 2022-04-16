@@ -5,14 +5,14 @@ using Unity.Jobs;
 
 [UpdateInGroup(typeof(SimulationSystemGroup))]
 [AlwaysUpdateSystem]
-public class MovementSystemJobs : JobComponentSystem
+public partial class MovementSystemJobs : SystemBase
 {
-    protected override JobHandle OnUpdate(JobHandle inputDeps)
+    protected override void OnUpdate()
     {
         float deltaTime = Time.DeltaTime;
         float maxZ = StressTestManager.globalManager.HeightRange;
 
-        JobHandle jobHandle = Entities.
+        Entities.
             WithoutBurst().
             ForEach((ref Translation trans, ref MovementComponent move) =>
             {
@@ -20,8 +20,6 @@ public class MovementSystemJobs : JobComponentSystem
 
                 if (trans.Value.z > maxZ)
                     trans.Value.z = 0;
-            }).Schedule(inputDeps);
-
-        return jobHandle;
+            }).Schedule();
     }
 }

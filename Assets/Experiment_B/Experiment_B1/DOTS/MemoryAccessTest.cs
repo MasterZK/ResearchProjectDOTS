@@ -4,57 +4,61 @@ using Unity.Entities;
 using System.Diagnostics;
 using System;
 
-public class MemoryAccessTest : MonoBehaviour
+namespace Experiment_B1
 {
-    [SerializeField] private int numberOfEntities = 1000;
-    [SerializeField] private bool readOnly = false;
-    [SerializeField] private int totalCount = 10000;
 
-    SystemBase system;
-    StressTestStatistics testStats = new StressTestStatistics();
-    Stopwatch stopWatch = new Stopwatch();
-    int currentCount;
-
-    void Start()
+    public class MemoryAccessTest : MonoBehaviour
     {
-        Type type;
-        if (readOnly)
-            type = typeof(UpdateSystem_RunReader);
-        else
-            type = typeof(UpdateSystem_Run);
+        [SerializeField] private int numberOfEntities = 1000;
+        [SerializeField] private bool readOnly = false;
+        [SerializeField] private int totalCount = 10000;
 
-        system = (SystemBase)Activator.CreateInstance(type);
+        SystemBase system;
+        StressTestStatistics testStats = new StressTestStatistics();
+        Stopwatch stopWatch = new Stopwatch();
+        int currentCount;
 
-        var world = World.DefaultGameObjectInjectionWorld;
-        var entityArray = world.EntityManager.CreateEntity(world.EntityManager.CreateArchetype(typeof(TestComponent)), numberOfEntities, Allocator.Temp);
-        entityArray.Dispose();
-
-        world.AddSystem(system);
-    }
-
-    void Update()
-    {
-        ++currentCount;
-
-        stopWatch.Reset();
-        stopWatch.Start();
-
-        system.Update();
-
-        stopWatch.Stop();
-
-        if (currentCount <= totalCount && currentCount >= 0)
+        void Start()
         {
-            testStats.AddValue((float)stopWatch.Elapsed.TotalMilliseconds);
+            Type type;
+            if (readOnly)
+                type = typeof(UpdateSystem_RunReader);
+            else
+                type = typeof(UpdateSystem_Run);
 
-            if ((testStats.Count % 1000) == 0)
-                UnityEngine.Debug.Log($"{testStats.Count} calls. Average read & write time is {testStats.MeanTime}ms +/- {testStats.SigmaDeviation}ms");
+            system = (SystemBase)Activator.CreateInstance(type);
+
+            var world = World.DefaultGameObjectInjectionWorld;
+            var entityArray = world.EntityManager.CreateEntity(world.EntityManager.CreateArchetype(typeof(TestComponent)), numberOfEntities, Allocator.Temp);
+            entityArray.Dispose();
+
+            world.AddSystem(system);
         }
 
-        if (testStats.Count == totalCount)
+        void Update()
         {
-            UnityEngine.Debug.Log($"{testStats.Count} calls. Average read & write time is {testStats.MeanTime}ms +/- {testStats.SigmaDeviation}ms");
-            Destroy(this.gameObject);
+            ++currentCount;
+
+            stopWatch.Reset();
+            stopWatch.Start();
+
+            system.Update();
+
+            stopWatch.Stop();
+
+            if (currentCount <= totalCount && currentCount >= 0)
+            {
+                testStats.AddValue((float)stopWatch.Elapsed.TotalMilliseconds);
+
+                if ((testStats.Count % 1000) == 0)
+                    UnityEngine.Debug.Log($"{testStats.Count} calls. Average read & write time is {testStats.MeanTime}ms +/- {testStats.SigmaDeviation}ms");
+            }
+
+            if (testStats.Count == totalCount)
+            {
+                UnityEngine.Debug.Log($"{testStats.Count} calls. Average read & write time is {testStats.MeanTime}ms +/- {testStats.SigmaDeviation}ms");
+                Destroy(this.gameObject);
+            }
         }
     }
 

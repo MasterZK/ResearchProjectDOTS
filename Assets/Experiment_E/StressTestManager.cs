@@ -110,9 +110,9 @@ public class StressTestManager : MonoBehaviour
             typeof(Translation),
             typeof(Rotation),
             typeof(LocalToWorld),
+            typeof(NonUniformScale),
 
             typeof(RenderMesh),
-            typeof(Scale),
             typeof(RenderBounds),
 
             typeof(MovementComponent)
@@ -178,7 +178,7 @@ public class StressTestManager : MonoBehaviour
             }
 
             entityManager.SetComponentData(myEntity, new Translation { Value = GetRandomPosition() });
-            entityManager.AddComponentData(myEntity, new Scale { Value = GetRandomScale(unitScale) });
+            entityManager.SetComponentData(myEntity, new NonUniformScale { Value = GetRandomScale(unitScale) });
             entityManager.AddComponentData(myEntity, new MovementComponent { MoveSpeed = this.movementSpeed });
         }
     }
@@ -190,7 +190,7 @@ public class StressTestManager : MonoBehaviour
             Entity myEntity = entityManager.CreateEntity(entityArchetype);
 
             entityManager.AddComponentData(myEntity, new Translation { Value = GetRandomPosition() });
-            entityManager.AddComponentData(myEntity, new Scale { Value = GetRandomScale(unitScale) });
+            entityManager.AddComponentData(myEntity, new NonUniformScale { Value = GetRandomScale(unitScale) });
             entityManager.AddComponentData(myEntity, new MovementComponent { MoveSpeed = this.movementSpeed });
 
             entityManager.AddSharedComponentData(myEntity, new RenderMesh

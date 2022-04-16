@@ -1,6 +1,9 @@
 using Unity.Entities;
 
-public struct TestComponent : IComponentData
+namespace Experiment_B1
 {
-    public float Value;
+    public struct TestComponent : IComponentData
+    {
+        public float Value;
+    }
 }
