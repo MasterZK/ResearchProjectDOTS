@@ -189,14 +189,15 @@ public class StressTestManager : MonoBehaviour
         {
             Entity myEntity = entityManager.CreateEntity(entityArchetype);
 
-            entityManager.AddComponentData(myEntity, new Translation { Value = GetRandomPosition() });
-            entityManager.AddComponentData(myEntity, new NonUniformScale { Value = GetRandomScale(unitScale) });
-            entityManager.AddComponentData(myEntity, new MovementComponent { MoveSpeed = this.movementSpeed });
+            entityManager.SetComponentData(myEntity, new Translation { Value = GetRandomPosition() });
+            entityManager.SetComponentData(myEntity, new NonUniformScale { Value = GetRandomScale(unitScale) });
+            entityManager.SetComponentData(myEntity, new MovementComponent { MoveSpeed = this.movementSpeed });
 
-            entityManager.AddSharedComponentData(myEntity, new RenderMesh
+            entityManager.SetSharedComponentData(myEntity, new RenderMesh
             {
                 mesh = unitMesh,
-                material = unitMaterial
+                material = unitMaterial,
+                layerMask = 1
             });
         }
     }
@@ -209,8 +210,8 @@ public class StressTestManager : MonoBehaviour
 
         if (instanciationMode != InstanciationMode.Classic)
         {
-            if (!useJob)  
-                World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<MovementSystem>().Enabled = true;            
+            if (!useJob)
+                World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<MovementSystem>().Enabled = true;
             else if (burstJob)
                 World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<MovementSystemJobsBurst>().Enabled = true;
             else if (!burstJob)
