@@ -5,6 +5,7 @@ using Unity.Jobs;
 
 [UpdateInGroup(typeof(SimulationSystemGroup))]
 [AlwaysUpdateSystem]
+[DisableAutoCreation]
 public partial class MovementSystemJobs : SystemBase
 {
     protected override void OnUpdate()

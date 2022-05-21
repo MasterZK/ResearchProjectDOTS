@@ -4,6 +4,7 @@ using Unity.Mathematics;
 
 [UpdateInGroup(typeof(SimulationSystemGroup))]
 [AlwaysUpdateSystem]
+[DisableAutoCreation]
 public class MovementSystem : ComponentSystem
 {
     protected override void OnUpdate()
