@@ -6,6 +6,7 @@ public class SortExperiment : MonoBehaviour
     [Space]
     [SerializeField] public bool ecs = false;
     [SerializeField] public bool multithreaded = false;
+    [SerializeField] public bool outputResult = false;
 
     private void Start()
     {
@@ -17,6 +18,7 @@ public class SortExperiment : MonoBehaviour
                 Debug.Log("ECS is only available with mulitthreading!");
             multithreaded = true;
             tempECS.arraySize = this.arraySize;
+            tempECS.outputSortedArray = this.outputResult;
             tempECS.StartSort();
 
             return;
@@ -26,6 +28,7 @@ public class SortExperiment : MonoBehaviour
 
         temp.arraySize = this.arraySize;
         temp.multithreaded = this.multithreaded;
+        temp.outputSortedArray = this.outputResult;
         temp.StartSort();
     }
 }

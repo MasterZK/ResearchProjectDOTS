@@ -18,7 +18,7 @@ public class MergeSorterECS : MonoBehaviour
 {
     [SerializeField] public int arraySize;
     [SerializeField] bool multithreaded = true;
-    [SerializeField] bool outputSortedArray = true;
+    [SerializeField] public bool outputSortedArray = true;
 
     NativeArray<int> toSortArray;
 
@@ -49,6 +49,8 @@ public class MergeSorterECS : MonoBehaviour
         completeRequests();
 
         stopWatch.Stop();
+
+        disposeAfterSort();
 
         UnityEngine.Debug.Log("Total time to sort: " + stopWatch.Elapsed.TotalMilliseconds + " ms");
         UnityEngine.Debug.Log("Total time to sort: " + stopWatch.Elapsed.TotalMilliseconds * 1000000 + " ns");
@@ -137,6 +139,33 @@ public class MergeSorterECS : MonoBehaviour
         JobHandle.CompleteAll(jobHandles);
 
         toSortArray.CopyFrom(mergeJobs[2].result);
+    }
+
+    private void disposeAfterSort()
+    {
+        if (toSortArray.IsCreated)
+            toSortArray.Dispose();
+
+        if (jobHandles.IsCreated)
+            jobHandles.Dispose();
+
+        foreach (MergeSortJob job in sortJobs)
+        {
+            if (job.result.IsCreated)
+                job.result.Dispose();
+        }
+
+        foreach (SortRequest request in sortRequests)
+        {
+            if (request.toSort.IsCreated)
+                request.toSort.Dispose();
+        }
+
+        foreach (MergeJob job in mergeJobs)
+        {
+            if (job.result.IsCreated)
+                job.result.Dispose();
+        }
     }
 
     private void OnDestroy()

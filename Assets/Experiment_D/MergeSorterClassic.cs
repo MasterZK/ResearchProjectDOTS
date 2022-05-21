@@ -6,6 +6,7 @@ public class MergeSorterClassic : MonoBehaviour
 {
     [SerializeField] public int arraySize;
     [SerializeField] public bool multithreaded = false;
+    [SerializeField] public bool outputSortedArray = true;
 
     int[] toSortArray;
 
@@ -34,15 +35,18 @@ public class MergeSorterClassic : MonoBehaviour
             mergeSort(0,arraySize - 1);
         
         stopWatch.Stop();
-
-        UnityEngine.Debug.Log("Sorted Array:  ");
-        for (int i = 0; i < arraySize; i++)
-            UnityEngine.Debug.Log(toSortArray[i] + " ");
-
+        
         UnityEngine.Debug.Log("Total time to sort: " + stopWatch.Elapsed.TotalMilliseconds + " ms");
         UnityEngine.Debug.Log("Total time to sort: " + stopWatch.Elapsed.TotalMilliseconds * 1000000 + " ns");
         var threaded = multithreaded ? "multithreadeing!" : "no multithreading!";
         UnityEngine.Debug.Log("This merge sort was conducted in classic unity and uses " + threaded);
+
+        if (!outputSortedArray)
+            return;
+
+        UnityEngine.Debug.Log("Sorted Array:  ");
+        for (int i = 0; i < arraySize; i++)
+            UnityEngine.Debug.Log(toSortArray[i] + " ");
     }
 
     void createThreads()
