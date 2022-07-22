@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using UnityEditor;
 using UnityEngine;
 
 enum DataStructure
@@ -19,12 +20,14 @@ public class MemoryAccessTestClassic : MonoBehaviour
     [SerializeField] GameObject testObjectSoA;
     TestObjectSoA SoATestObject;
 
-    StressTestStatistics testStats = new StressTestStatistics();
+    StressTestStatistics testStats;
     Stopwatch stopWatch = new Stopwatch();
     int currentCount;
 
     void Start()
     {
+        testStats = new StressTestStatistics(1);
+
         if (dataStructure == DataStructure.AoS)
             StartAoS();
         else
@@ -101,7 +104,7 @@ public class MemoryAccessTestClassic : MonoBehaviour
 
             stopWatch.Stop();
 
-            testStats.AddValue((float)stopWatch.Elapsed.TotalMilliseconds);
+            testStats.AddValue(stopWatch.Elapsed.TotalMilliseconds);
             return;
         }
 
@@ -115,7 +118,7 @@ public class MemoryAccessTestClassic : MonoBehaviour
 
         stopWatch.Stop();
 
-        testStats.AddValue((float)stopWatch.Elapsed.TotalMilliseconds);
+        testStats.AddValue(stopWatch.Elapsed.TotalMilliseconds);
     }
 
     void outputTestData()
@@ -130,6 +133,8 @@ public class MemoryAccessTestClassic : MonoBehaviour
         {
             UnityEngine.Debug.Log($"{testStats.Count} calls. Average read & write time is {testStats.MeanTime}ms +/- {testStats.SigmaDeviation}ms");
             Destroy(this.gameObject);
+
+            testStats.outputStatistic("B1-classic");
         }
     }
 }
