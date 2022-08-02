@@ -42,7 +42,7 @@ public class ExperimentManager : MonoBehaviour
     private EntityArchetype entityArchetype;
     private Entity conversionEnity;
 
-    StressTestStatistics testStats = new StressTestStatistics();
+    StressTestStatistics testStats = new StressTestStatistics(1);
     Stopwatch stopWatch = new Stopwatch();
 
     private EntityManager entityManager;
@@ -105,7 +105,7 @@ public class ExperimentManager : MonoBehaviour
             typeof(LocalToWorld),
 
             typeof(RenderMesh),
-            typeof(Scale),
+            typeof(NonUniformScale),
             typeof(RenderBounds)
         );
     }
@@ -180,12 +180,13 @@ public class ExperimentManager : MonoBehaviour
             Entity myEntity = entityManager.CreateEntity(entityArchetype);
 
             entityManager.AddComponentData(myEntity, new Translation { Value = GetRandomPosition() });
-            entityManager.AddComponentData(myEntity, new Scale { Value = GetRandomScale(unitScale) });
+            entityManager.SetComponentData(myEntity, new NonUniformScale { Value = GetRandomScale(unitScale) });
 
             entityManager.AddSharedComponentData(myEntity, new RenderMesh
             {
                 mesh = unitMesh,
-                material = unitMaterial
+                material = unitMaterial,
+                layerMask = 1
             });
         }
     }
