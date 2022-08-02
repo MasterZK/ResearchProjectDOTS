@@ -44,7 +44,7 @@ public class StressTestManager : MonoBehaviour
     private EntityArchetype entityArchetype;
     private Entity conversionEnity;
 
-    StressTestStatistics testStats = new StressTestStatistics();
+    StressTestStatistics testStats = new StressTestStatistics(1);
     Stopwatch stopWatch = new Stopwatch();
 
     private EntityManager entityManager;
@@ -92,7 +92,7 @@ public class StressTestManager : MonoBehaviour
             if (outputTime)
             {
                 stopWatch.Stop();
-                testStats.AddValue((float)stopWatch.Elapsed.TotalMilliseconds);
+                testStats.AddValue(stopWatch.Elapsed.TotalMilliseconds);
 
                 UnityEngine.Debug.Log($"{totalInstanciated} units instanced. Average instance time is {testStats.MeanTime}ms +/- {testStats.SigmaDeviation}ms");
                 UnityEngine.Debug.Log("Total time elapsed: " + stopWatch.Elapsed.TotalMilliseconds + " ms");
@@ -204,9 +204,11 @@ public class StressTestManager : MonoBehaviour
 
     private void SetMovementMode()
     {
-        World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<MovementSystem>().Enabled = false;
-        World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<MovementSystemJobs>().Enabled = false;
-        World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<MovementSystemJobsBurst>().Enabled = false;
+        defaultWorld = World.DefaultGameObjectInjectionWorld;
+
+        defaultWorld.GetOrCreateSystem<MovementSystem>();
+        defaultWorld.GetOrCreateSystem<MovementSystemJobs>();
+        defaultWorld.GetOrCreateSystem<MovementSystemJobsBurst>();
 
         if (instanciationMode != InstanciationMode.Classic)
         {

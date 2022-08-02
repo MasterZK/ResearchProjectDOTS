@@ -1,4 +1,3 @@
-using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
@@ -17,7 +16,7 @@ public struct StressTestStatistics
 
     //constructor parameter is required in C# 8.0 and has no meaning
     //parameterless constructor are not supported in C# 8.0
-    public StressTestStatistics(float number = 0) 
+    public StressTestStatistics(float number) 
     {
         MeanTime = 0;
         SigmaDeviation = 0;
@@ -39,8 +38,6 @@ public struct StressTestStatistics
         MeanTime = (float)(sum / Count);
         var sigmaSq = (float)(sumSquared / Count - (MeanTime * MeanTime));
         var sigma = sigmaSq;
-        //if (sigmaSq > Mathf.Epsilon)
-        //    sigma = Mathf.Sqrt(sigmaSq);
 
         SigmaDeviation = sigma;
     }

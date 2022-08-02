@@ -14,7 +14,7 @@ namespace Experiment_B1
         [SerializeField] private int totalCount = 10000;
 
         SystemBase system;
-        StressTestStatistics testStats = new StressTestStatistics();
+        StressTestStatistics testStats = new StressTestStatistics(1);
         Stopwatch stopWatch = new Stopwatch();
         int currentCount;
 
@@ -29,7 +29,9 @@ namespace Experiment_B1
             system = (SystemBase)Activator.CreateInstance(type);
 
             var world = World.DefaultGameObjectInjectionWorld;
-            var entityArray = world.EntityManager.CreateEntity(world.EntityManager.CreateArchetype(typeof(TestComponent)), numberOfEntities, Allocator.Temp);
+            var testArchetype = world.EntityManager.CreateArchetype(typeof(TestComponent));
+            var entityArray = world.EntityManager.CreateEntity(testArchetype, numberOfEntities, Allocator.Temp);
+
             entityArray.Dispose();
 
             world.AddSystem(system);

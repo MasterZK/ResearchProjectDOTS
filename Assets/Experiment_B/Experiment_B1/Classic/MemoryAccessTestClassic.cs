@@ -20,14 +20,12 @@ public class MemoryAccessTestClassic : MonoBehaviour
     [SerializeField] GameObject testObjectSoA;
     TestObjectSoA SoATestObject;
 
-    StressTestStatistics testStats;
+    StressTestStatistics testStats = new StressTestStatistics(1);
     Stopwatch stopWatch = new Stopwatch();
     int currentCount;
 
     void Start()
     {
-        testStats = new StressTestStatistics(1);
-
         if (dataStructure == DataStructure.AoS)
             StartAoS();
         else
@@ -75,7 +73,7 @@ public class MemoryAccessTestClassic : MonoBehaviour
 
             stopWatch.Stop();
 
-            testStats.AddValue((float)stopWatch.Elapsed.TotalMilliseconds);
+            testStats.AddValue(stopWatch.Elapsed.TotalMilliseconds);
             return;
         }
 
@@ -83,11 +81,14 @@ public class MemoryAccessTestClassic : MonoBehaviour
         stopWatch.Start();
 
         foreach (TestObjectAoS testObject in testObjects)
+        { 
             testObject.Value++;
+        }
+            
 
         stopWatch.Stop();
 
-        testStats.AddValue((float)stopWatch.Elapsed.TotalMilliseconds);
+        testStats.AddValue(stopWatch.Elapsed.TotalMilliseconds);
     }
 
     void UpdateSoA()
