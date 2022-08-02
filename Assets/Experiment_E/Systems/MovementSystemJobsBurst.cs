@@ -6,7 +6,7 @@ using Unity.Jobs;
 [UpdateInGroup(typeof(SimulationSystemGroup))]
 [AlwaysUpdateSystem]
 [DisableAutoCreation]
-public partial class  MovementSystemJobsBurst : SystemBase
+public partial class MovementSystemJobsBurst : SystemBase
 {
     protected override void OnUpdate()
     {
@@ -21,8 +21,7 @@ public partial class  MovementSystemJobsBurst : SystemBase
 
                 if (trans.Value.z > maxZ)
                     trans.Value.z = 0;
-            }).Schedule();
-
+            }).ScheduleParallel();
     }
 }
 

@@ -50,6 +50,8 @@ public class StressTestManager : MonoBehaviour
     private EntityManager entityManager;
     private World defaultWorld;
 
+    private SystemBase updateSystem;
+
     public static StressTestManager globalManager;
 
     // Start is called before the first frame update
@@ -64,16 +66,16 @@ public class StressTestManager : MonoBehaviour
         {
             case InstanciationMode.ECSPure:
                 SetupPureECS();
+                SetMovementMode();
                 break;
             case InstanciationMode.ECSConversion:
                 SetupECSConversion();
+                SetMovementMode();
                 break;
 
             default:
                 break;
         }
-
-        SetMovementMode();
 
         uiManager.DisplayInstanceMode(instanciationMode);
         uiManager.DisplayTotalInstanced(totalInstanciated);
@@ -81,6 +83,9 @@ public class StressTestManager : MonoBehaviour
 
     void Update()
     {
+        if (instanciationMode != InstanciationMode.Classic)
+            updateSystem.Update();
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             stopWatch.Reset();
@@ -89,14 +94,15 @@ public class StressTestManager : MonoBehaviour
 
             SpawnUnit(numberToSpawn);
 
-            if (outputTime)
-            {
-                stopWatch.Stop();
-                testStats.AddValue(stopWatch.Elapsed.TotalMilliseconds);
+            if (!outputTime)
+                return;
 
-                UnityEngine.Debug.Log($"{totalInstanciated} units instanced. Average instance time is {testStats.MeanTime}ms +/- {testStats.SigmaDeviation}ms");
-                UnityEngine.Debug.Log("Total time elapsed: " + stopWatch.Elapsed.TotalMilliseconds + " ms");
-            }
+            stopWatch.Stop();
+            testStats.AddValue(stopWatch.Elapsed.TotalMilliseconds);
+
+            UnityEngine.Debug.Log($"{totalInstanciated} units instanced. Average instance time is {testStats.MeanTime}ms");
+            UnityEngine.Debug.Log("Total time elapsed: " + stopWatch.Elapsed.TotalMilliseconds + " ms");
+
         }
     }
 
@@ -179,7 +185,7 @@ public class StressTestManager : MonoBehaviour
 
             entityManager.SetComponentData(myEntity, new Translation { Value = GetRandomPosition() });
             entityManager.SetComponentData(myEntity, new NonUniformScale { Value = GetRandomScale(unitScale) });
-            entityManager.AddComponentData(myEntity, new MovementComponent { MoveSpeed = this.movementSpeed });
+            entityManager.SetComponentData(myEntity, new MovementComponent { MoveSpeed = this.movementSpeed });
         }
     }
 
@@ -206,19 +212,21 @@ public class StressTestManager : MonoBehaviour
     {
         defaultWorld = World.DefaultGameObjectInjectionWorld;
 
-        defaultWorld.GetOrCreateSystem<MovementSystem>();
-        defaultWorld.GetOrCreateSystem<MovementSystemJobs>();
-        defaultWorld.GetOrCreateSystem<MovementSystemJobsBurst>();
+        defaultWorld.GetOrCreateSystem<MovementSystem>().Enabled = false;
+        defaultWorld.GetOrCreateSystem<MovementSystemJobs>().Enabled = false;
+        defaultWorld.GetOrCreateSystem<MovementSystemJobsBurst>().Enabled = false;
 
         if (instanciationMode != InstanciationMode.Classic)
         {
             if (!useJob)
-                World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<MovementSystem>().Enabled = true;
+                updateSystem = World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<MovementSystem>();
             else if (burstJob)
-                World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<MovementSystemJobsBurst>().Enabled = true;
+                updateSystem = World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<MovementSystemJobsBurst>();
             else if (!burstJob)
-                World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<MovementSystemJobs>().Enabled = true;
+                updateSystem = World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<MovementSystemJobs>();
         }
+
+        updateSystem.Enabled = true;
     }
 
     private float3 GetRandomPosition()

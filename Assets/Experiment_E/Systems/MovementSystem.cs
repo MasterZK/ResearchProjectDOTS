@@ -5,11 +5,12 @@ using Unity.Mathematics;
 [UpdateInGroup(typeof(SimulationSystemGroup))]
 [AlwaysUpdateSystem]
 [DisableAutoCreation]
-public class MovementSystem : ComponentSystem
+public partial class MovementSystem : SystemBase
 {
     protected override void OnUpdate()
     {
         Entities.
+            WithoutBurst().
             ForEach((ref Translation trans, ref MovementComponent move) =>
             {
                 float deltaTime = Time.DeltaTime;
@@ -17,7 +18,7 @@ public class MovementSystem : ComponentSystem
 
                 if (trans.Value.z > StressTestManager.globalManager.HeightRange)
                     trans.Value.z = 0;
-            });
+            }).Run();
     }
 }
 

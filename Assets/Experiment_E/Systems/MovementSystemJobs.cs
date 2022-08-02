@@ -21,6 +21,6 @@ public partial class MovementSystemJobs : SystemBase
 
                 if (trans.Value.z > maxZ)
                     trans.Value.z = 0;
-            }).Schedule();
+            }).ScheduleParallel();
     }
 }
