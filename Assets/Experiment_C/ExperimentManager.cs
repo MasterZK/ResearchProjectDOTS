@@ -16,6 +16,9 @@ public class ExperimentManager : MonoBehaviour
 {
     [SerializeField] private InstanciationMode instanciationMode;
     [SerializeField] private int numberToSpawn;
+    [SerializeField] private bool convertionOnCreate = true;
+
+    [Header("Debug")]
     [SerializeField] private bool outputTime = true;
 
     [Header("UI")]
@@ -27,9 +30,6 @@ public class ExperimentManager : MonoBehaviour
     [SerializeField] private float leftBounds;
     [SerializeField] private float rightBounds;
     [SerializeField] private float heightRange = 10;
-
-    [Header("Conversion Setting")]
-    [SerializeField] private bool convertionOnCreate = true;
 
     [Header("Components & Prefabs")]
     [SerializeField] private Mesh unitMesh;
@@ -103,10 +103,15 @@ public class ExperimentManager : MonoBehaviour
             typeof(Translation),
             typeof(Rotation),
             typeof(LocalToWorld),
+            typeof(NonUniformScale),
 
             typeof(RenderMesh),
-            typeof(NonUniformScale),
-            typeof(RenderBounds)
+            typeof(RenderBounds),
+            typeof(BuiltinMaterialPropertyUnity_LightData),
+
+            typeof(PerInstanceCullingTag),
+            typeof(BlendProbeTag),
+            typeof(WorldToLocal_Tag)
         );
     }
 
@@ -169,7 +174,7 @@ public class ExperimentManager : MonoBehaviour
             }
 
             entityManager.SetComponentData(myEntity, new Translation { Value = GetRandomPosition() });
-            entityManager.AddComponentData(myEntity, new Scale { Value = GetRandomScale(unitScale) });
+            entityManager.AddComponentData(myEntity, new NonUniformScale { Value = GetRandomScale(unitScale) });
         }
     }
 
@@ -179,8 +184,9 @@ public class ExperimentManager : MonoBehaviour
         {
             Entity myEntity = entityManager.CreateEntity(entityArchetype);
 
-            entityManager.AddComponentData(myEntity, new Translation { Value = GetRandomPosition() });
+            entityManager.AddComponentData(myEntity, new Translation { Value = GetRandomPosition() }); 
             entityManager.SetComponentData(myEntity, new NonUniformScale { Value = GetRandomScale(unitScale) });
+            entityManager.SetComponentData(myEntity, new BuiltinMaterialPropertyUnity_LightData { Value = new float4(0, 0, 1, 0) });
 
             entityManager.AddSharedComponentData(myEntity, new RenderMesh
             {
