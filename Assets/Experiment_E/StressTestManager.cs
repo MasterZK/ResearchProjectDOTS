@@ -9,9 +9,12 @@ public class StressTestManager : MonoBehaviour
 {
     [SerializeField] private InstanciationMode instanciationMode;
     [SerializeField] private int numberToSpawn;
+    [SerializeField] private bool convertionOnCreate = true; 
+
+    [Header("Debug")]
     [SerializeField] private bool outputTime = true;
 
-    [Header("Movement")]
+    [Header("Movement system")]
     [SerializeField] private bool useJob;
     [SerializeField] private bool burstJob;
     [SerializeField] private float movementSpeed;
@@ -27,11 +30,8 @@ public class StressTestManager : MonoBehaviour
     [SerializeField] private float leftBounds;
     [SerializeField] private float rightBounds;
     [SerializeField] private float heightRange = 10;
-
     public float HeightRange => heightRange;
 
-    [Header("Conversion Setting")]
-    [SerializeField] private bool convertionOnCreate = true;
 
     [Header("Components & Prefabs")]
     [SerializeField] private Mesh unitMesh;
@@ -120,6 +120,11 @@ public class StressTestManager : MonoBehaviour
 
             typeof(RenderMesh),
             typeof(RenderBounds),
+            typeof(BuiltinMaterialPropertyUnity_LightData),
+
+            typeof(PerInstanceCullingTag),
+            typeof(BlendProbeTag),
+            typeof(WorldToLocal_Tag),
 
             typeof(MovementComponent)
         );
@@ -184,8 +189,8 @@ public class StressTestManager : MonoBehaviour
             }
 
             entityManager.SetComponentData(myEntity, new Translation { Value = GetRandomPosition() });
-            entityManager.SetComponentData(myEntity, new NonUniformScale { Value = GetRandomScale(unitScale) });
-            entityManager.SetComponentData(myEntity, new MovementComponent { MoveSpeed = this.movementSpeed });
+            entityManager.AddComponentData(myEntity, new NonUniformScale { Value = GetRandomScale(unitScale) });
+            entityManager.AddComponentData(myEntity, new MovementComponent { MoveSpeed = this.movementSpeed });
         }
     }
 
@@ -197,6 +202,7 @@ public class StressTestManager : MonoBehaviour
 
             entityManager.SetComponentData(myEntity, new Translation { Value = GetRandomPosition() });
             entityManager.SetComponentData(myEntity, new NonUniformScale { Value = GetRandomScale(unitScale) });
+            entityManager.SetComponentData(myEntity, new BuiltinMaterialPropertyUnity_LightData { Value = new float4(0, 0, 1, 0) });
             entityManager.SetComponentData(myEntity, new MovementComponent { MoveSpeed = this.movementSpeed });
 
             entityManager.SetSharedComponentData(myEntity, new RenderMesh
