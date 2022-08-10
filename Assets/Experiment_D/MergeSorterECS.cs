@@ -36,7 +36,7 @@ public class MergeSorterECS : MonoBehaviour
 
     public void StartSort()
     {
-        toSortArray = new NativeArray<int>(arraySize, Allocator.Temp);
+        toSortArray = new NativeArray<int>(arraySize, Allocator.Persistent);
 
         for (int i = 0; i < arraySize; i++)
             toSortArray[i] = UnityEngine.Random.Range(0, arraySize * 10);
@@ -50,18 +50,18 @@ public class MergeSorterECS : MonoBehaviour
 
         stopWatch.Stop();
 
-        disposeAfterSort();
-
         UnityEngine.Debug.Log("Total time to sort: " + stopWatch.Elapsed.TotalMilliseconds + " ms");
         UnityEngine.Debug.Log("Total time to sort: " + stopWatch.Elapsed.TotalMilliseconds * 1000000 + " ns");
         UnityEngine.Debug.Log("This merge sort was conducted in ECS and uses multithreadeing!");
+ 
+        disposeAfterSort();
 
         if (!outputSortedArray)
             return;
 
         UnityEngine.Debug.Log("Sorted Array:  ");
         for (int i = 0; i < arraySize; i++)
-            UnityEngine.Debug.Log(toSortArray[i] + " ");
+            UnityEngine.Debug.Log(toSortArray[i] + " ");   
     }
 
     void createJobs()
@@ -69,9 +69,6 @@ public class MergeSorterECS : MonoBehaviour
         jobHandles = new NativeArray<JobHandle>(numberOfJobs + 3, Allocator.Temp);
         sortRequests = new SortRequest[numberOfJobs];
         sortJobs = new MergeSortJob[numberOfJobs];
-
-        mergeRequests = new MergeRequest[3];
-        mergeJobs = new MergeJob[3];
 
         for (int i = 0; i < numberOfJobs; i++)
         {
@@ -92,6 +89,10 @@ public class MergeSorterECS : MonoBehaviour
             };
             jobHandles[i] = sortJobs[i].Schedule();
         }
+
+
+        mergeRequests = new MergeRequest[3];
+        mergeJobs = new MergeJob[3];
 
         var length = createMergeRequests(0, 0, 1);
         mergeJobs[0] = new MergeJob()
@@ -121,7 +122,6 @@ public class MergeSorterECS : MonoBehaviour
             result = new NativeArray<int>(mergeJobs[0].result.Length + mergeJobs[1].result.Length, Allocator.TempJob),
         };
         jobHandles[6] = mergeJobs[2].Schedule(JobHandle.CombineDependencies(jobHandles[4], jobHandles[5]));
-
     }
 
     private int createMergeRequests(int mergeRequestIndex, int resultOne, int resultTwo)
@@ -143,9 +143,6 @@ public class MergeSorterECS : MonoBehaviour
 
     private void disposeAfterSort()
     {
-        if (toSortArray.IsCreated)
-            toSortArray.Dispose();
-
         if (jobHandles.IsCreated)
             jobHandles.Dispose();
 
