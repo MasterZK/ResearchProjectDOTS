@@ -42,6 +42,9 @@ public class ExperimentManager : MonoBehaviour
     private EntityArchetype entityArchetype;
     private Entity conversionEnity;
 
+    private BlobAssetStore blobAssetStore;
+    private GameObjectConversionSettings settings;
+
     StressTestStatistics testStats = new StressTestStatistics(1);
     Stopwatch stopWatch = new Stopwatch();
 
@@ -89,6 +92,8 @@ public class ExperimentManager : MonoBehaviour
 
                 UnityEngine.Debug.Log($"{totalInstanciated} units instanced. Average instance time is {testStats.MeanTime}ms +/- {testStats.SigmaDeviation}ms");
                 UnityEngine.Debug.Log("Total time elapsed: " + stopWatch.Elapsed.TotalMilliseconds + " ms");
+
+                testStats.outputStatistic("Experiment-C");
             }
         }
     }
@@ -120,10 +125,12 @@ public class ExperimentManager : MonoBehaviour
         defaultWorld = World.DefaultGameObjectInjectionWorld;
         entityManager = defaultWorld.EntityManager;
 
+        blobAssetStore = new BlobAssetStore();
+        settings = GameObjectConversionSettings.FromWorld(defaultWorld, blobAssetStore);
+
         if (convertionOnCreate)
             return;
 
-        GameObjectConversionSettings settings = GameObjectConversionSettings.FromWorld(defaultWorld, null);
         conversionEnity = GameObjectConversionUtility.ConvertGameObjectHierarchy(classicPrefab, settings);
     }
 
@@ -164,7 +171,6 @@ public class ExperimentManager : MonoBehaviour
 
             if (convertionOnCreate)
             {
-                GameObjectConversionSettings settings = GameObjectConversionSettings.FromWorld(defaultWorld, null);
                 Entity conversion = GameObjectConversionUtility.ConvertGameObjectHierarchy(classicPrefab, settings);
                 myEntity = entityManager.Instantiate(conversion);
             }
@@ -184,7 +190,7 @@ public class ExperimentManager : MonoBehaviour
         {
             Entity myEntity = entityManager.CreateEntity(entityArchetype);
 
-            entityManager.AddComponentData(myEntity, new Translation { Value = GetRandomPosition() }); 
+            entityManager.SetComponentData(myEntity, new Translation { Value = GetRandomPosition() });
             entityManager.SetComponentData(myEntity, new NonUniformScale { Value = GetRandomScale(unitScale) });
             entityManager.SetComponentData(myEntity, new BuiltinMaterialPropertyUnity_LightData { Value = new float4(0, 0, 1, 0) });
 
@@ -209,5 +215,11 @@ public class ExperimentManager : MonoBehaviour
     {
         float scaleMin = 0.1f;
         return UnityEngine.Random.Range(scaleMin, scaleMax);
+    }
+
+    private void OnDestroy()
+    {
+        if (instanciationMode != InstanciationMode.Classic)
+            blobAssetStore.Dispose();
     }
 }
