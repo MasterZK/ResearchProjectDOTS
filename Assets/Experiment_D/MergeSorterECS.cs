@@ -49,19 +49,23 @@ public class MergeSorterECS : MonoBehaviour
         completeRequests();
 
         stopWatch.Stop();
+        SortExperiment.testStats.AddValue(stopWatch.Elapsed.TotalMilliseconds);
 
         UnityEngine.Debug.Log("Total time to sort: " + stopWatch.Elapsed.TotalMilliseconds + " ms");
         UnityEngine.Debug.Log("Total time to sort: " + stopWatch.Elapsed.TotalMilliseconds * 1000000 + " ns");
         UnityEngine.Debug.Log("This merge sort was conducted in ECS and uses multithreadeing!");
- 
+
         disposeAfterSort();
 
         if (!outputSortedArray)
+        {
+            Destroy(this);
             return;
+        }
 
         UnityEngine.Debug.Log("Sorted Array:  ");
         for (int i = 0; i < arraySize; i++)
-            UnityEngine.Debug.Log(toSortArray[i] + " ");   
+            UnityEngine.Debug.Log(toSortArray[i] + " ");
     }
 
     void createJobs()
@@ -169,27 +173,6 @@ public class MergeSorterECS : MonoBehaviour
     {
         if (toSortArray.IsCreated)
             toSortArray.Dispose();
-
-        if (jobHandles.IsCreated)
-            jobHandles.Dispose();
-
-        foreach (MergeSortJob job in sortJobs)
-        {
-            if (job.result.IsCreated)
-                job.result.Dispose();
-        }
-
-        foreach (SortRequest request in sortRequests)
-        {
-            if (request.toSort.IsCreated)
-                request.toSort.Dispose();
-        }
-
-        foreach (MergeJob job in mergeJobs)
-        {
-            if (job.result.IsCreated)
-                job.result.Dispose();
-        }
     }
 }
 

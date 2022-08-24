@@ -21,7 +21,7 @@ public class MergeSorterClassic : MonoBehaviour
         toSortArray = new int[arraySize];
 
         for (int i = 0; i < arraySize; i++)
-            toSortArray[i] = Random.Range(0,arraySize*10);
+            toSortArray[i] = Random.Range(0, arraySize * 10);
 
         if (multithreaded)
             createThreads();
@@ -32,17 +32,21 @@ public class MergeSorterClassic : MonoBehaviour
         if (multithreaded)
             multiThreadedStart();
         else
-            mergeSort(0,arraySize - 1);
-        
+            mergeSort(0, arraySize - 1);
+
         stopWatch.Stop();
-        
+        SortExperiment.testStats.AddValue(stopWatch.Elapsed.TotalMilliseconds);
+
         UnityEngine.Debug.Log("Total time to sort: " + stopWatch.Elapsed.TotalMilliseconds + " ms");
         UnityEngine.Debug.Log("Total time to sort: " + stopWatch.Elapsed.TotalMilliseconds * 1000000 + " ns");
         var threaded = multithreaded ? "multithreadeing!" : "no multithreading!";
         UnityEngine.Debug.Log("This merge sort was conducted in classic unity and uses " + threaded);
 
         if (!outputSortedArray)
+        {
+            Destroy(this);
             return;
+        }
 
         UnityEngine.Debug.Log("Sorted Array:  ");
         for (int i = 0; i < arraySize; i++)
@@ -62,7 +66,7 @@ public class MergeSorterClassic : MonoBehaviour
     {
         for (int i = 0; i < numberOfThreads; i++)
             threads[i].Start();
-        
+
         for (int i = 0; i < numberOfThreads; i++)
             threads[i].Join();
 
@@ -119,7 +123,7 @@ public class MergeSorterClassic : MonoBehaviour
         int leftCount = 0;
         int rightCount = 0;
 
-       // sort values and write back to main array
+        // sort values and write back to main array
         while (leftCount < leftSize && rightCount < rightSize)
         {
             if (left[leftCount] <= right[rightCount])
@@ -131,10 +135,10 @@ public class MergeSorterClassic : MonoBehaviour
         // insert remaining values from left
         while (leftCount < leftSize)
             toSortArray[arrayIndex++] = left[leftCount++];
-        
+
         // insert remaining values from right
         while (rightCount < rightSize)
             toSortArray[arrayIndex++] = right[rightCount++];
-        
+
     }
 }

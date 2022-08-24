@@ -153,8 +153,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   arraySize: 40
+  numberOfRuns: 1000
   ecs: 0
-  multithreaded: 1
+  multithreaded: 0
   outputResult: 0
 --- !u!4 &363682248
 Transform:
