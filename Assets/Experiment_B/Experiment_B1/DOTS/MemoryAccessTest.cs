@@ -30,7 +30,7 @@ namespace Experiment_B1
 
             var world = World.DefaultGameObjectInjectionWorld;
             var testArchetype = world.EntityManager.CreateArchetype(typeof(TestComponent));
-            var entityArray = world.EntityManager.CreateEntity(testArchetype, numberOfEntities, Allocator.Temp);
+            var entityArray = world.EntityManager.CreateEntity(testArchetype, numberOfEntities, Allocator.Persistent);
 
             entityArray.Dispose();
 
@@ -60,6 +60,9 @@ namespace Experiment_B1
             {
                 UnityEngine.Debug.Log($"{testStats.Count} calls. Average read & write time is {testStats.MeanTime}ms +/- {testStats.SigmaDeviation}ms");
                 Destroy(this.gameObject);
+
+
+                testStats.outputStatistic("B1-ECS");
             }
         }
     }
