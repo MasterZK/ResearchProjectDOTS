@@ -286,8 +286,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d37a228da0e0a5645ac4b919d926a678, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  instanciationMode: 1
+  instanciationMode: 2
   numberToSpawn: 1000
+  convertionOnCreate: 0
   outputTime: 1
   useJob: 1
   burstJob: 1
@@ -298,7 +299,6 @@ MonoBehaviour:
   leftBounds: 100
   rightBounds: -100
   heightRange: 100
-  convertionOnCreate: 0
   unitMesh: {fileID: 4068373912626513877, guid: 03bad69f6d660654da4a66ac4348339c, type: 3}
   unitMaterial: {fileID: 2100000, guid: d53fd3d404d186142aa3c25c6cb36b92, type: 2}
   unitScale: 5

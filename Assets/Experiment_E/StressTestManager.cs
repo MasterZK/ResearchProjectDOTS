@@ -103,6 +103,8 @@ public class StressTestManager : MonoBehaviour
             UnityEngine.Debug.Log($"{totalInstanciated} units instanced. Average instance time is {testStats.MeanTime}ms");
             UnityEngine.Debug.Log("Total time elapsed: " + stopWatch.Elapsed.TotalMilliseconds + " ms");
 
+            testStats.outputStatistic("E");
+
         }
     }
 
